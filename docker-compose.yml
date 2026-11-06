@@ -1,0 +1,57 @@
+# Local / single-host deployment: PostgreSQL, a one-off migration, the web app and the worker.
+#   cp .env.example .env   # set SESSION_SECRET and ANTHROPIC_API_KEY
+#   docker compose up --build
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: tessera
+      POSTGRES_PASSWORD: tessera
+      POSTGRES_DB: tessera
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tessera"]
+      interval: 3s
+      retries: 20
+
+  migrate:
+    build: .
+    command: npm run db:migrate
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://tessera:tessera@db:5432/tessera
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: .
+    command: npm run start:web
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://tessera:tessera@db:5432/tessera
+    ports:
+      - "3000:3000"
+    volumes:
+      - storage:/app/.data/storage
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    build: .
+    command: npm run worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://tessera:tessera@db:5432/tessera
+    volumes:
+      - storage:/app/.data/storage
+    shm_size: "1gb" # Chromium needs more than Docker's 64 MB default
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
+  storage:

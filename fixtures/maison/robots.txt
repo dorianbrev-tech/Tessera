@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /private/
+Allow: /
+
+User-agent: BadBot
+Disallow: /
+
+Sitemap: http://localhost:4100/sitemap.xml

@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-bg: #08080a;
+  --color-panel: #0d0d10;
+  --color-raised: #131317;
+  --color-overlay: #18181d;
+  --color-hover: #1c1c22;
+  --color-line: #1e1e24;
+  --color-line-strong: #2b2b33;
+  --color-fg: #ececef;
+  --color-fg-2: #a3a3ad;
+  --color-fg-3: #6c6c76;
+  --color-fg-4: #4a4a53;
+  --color-accent: #8ea2ff;
+  --color-accent-strong: #6f86ff;
+  --color-accent-soft: rgb(142 162 255 / 0.12);
+  --color-ok: #4ade80;
+  --color-warn: #f5b54a;
+  --color-bad: #f87171;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
+
+  --text-2xs: 11px;
+  --text-2xs--line-height: 16px;
+
+  --animate-fade-in: fade-in 0.18s ease-out;
+  --animate-rise: rise 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+}
+
+@layer base {
+  html,
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: rgb(142 162 255 / 0.3);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #2b2b33 transparent;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
+  }
+}
+
+@layer components {
+  .hairline {
+    border-color: var(--color-line);
+  }
+  .shimmer-text {
+    background: linear-gradient(90deg, var(--color-fg-3) 0%, var(--color-fg) 50%, var(--color-fg-3) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-shimmer);
+  }
+  .checker {
+    background-color: #0b0b0e;
+    background-image: radial-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+}
+
+/* Resizable panel separators */
+[data-separator] {
+  position: relative;
+  width: 1px;
+  background: var(--color-line);
+  transition: background-color 0.15s;
+}
+[data-separator]:hover,
+[data-separator][data-separator-state="active"],
+[data-separator][data-separator-state="hover"] {
+  background: var(--color-accent);
+}
+[data-separator]::after {
+  content: "";
+  position: absolute;
+  inset: 0 -4px;
+}
